@@ -1,0 +1,45 @@
+const vertexSS = `
+uniform mat4 MatrixOfNormals, MatrixOfViewProjection;
+attribute vec3 vt, nm;
+uniform float limit, smooth;
+uniform vec3 directionOfLight, positionOfLight;
+varying vec3 normalInterp, verticalPosition;
+varying vec3 fragmentColor;
+uniform vec4 figureColor;
+
+void main() {
+   vec3 normalVector = normalize(mat3(MatrixOfNormals)*nm);
+   vec3 vertexVector = mat3(MatrixOfViewProjection)*vt;
+   vec3 vectorToLightPosition = positionOfLight-vertexVector;
+   vec3 vectorToViewPosition = -vertexVector;
+   vec3 halfVector = normalize(vectorToLightPosition + vectorToViewPosition);
+   float prodLDandLS = dot(vectorToLightPosition, normalize(-directionOfLight));
+   float smoothTransitionU_limitAndU_smoothValue = smoothstep(limit, limit + smooth, prodLDandLS);
+   float mirroringLight = smoothTransitionU_limitAndU_smoothValue * pow(dot(normalVector, halfVector), 1.0);    
+   normalInterp = vec3(MatrixOfNormals * vec4(nm, 0.0));
+   vec3 normalToSurface = normalize(normalInterp);
+   float lambertianCos = max(dot(normalToSurface, vectorToLightPosition), 0.0);
+   if (lambertianCos > 0.0) {
+      vec3 lightVector = reflect(-vectorToLightPosition, normalToSurface);
+      vec3 vectorToObserver = normalize(-verticalPosition);
+      float mirroringAngle = max(dot(lightVector, vectorToObserver), 0.0);
+      mirroringLight = pow(mirroringAngle, 10.0);
+   }
+   fragmentColor = vec3(figureColor) + lambertianCos*vec3(0.0, 0.0, 0.0) + mirroringLight*vec3(1.0);
+   gl_Position = MatrixOfViewProjection * vec4(vt, 1.0);
+}`;
+
+
+const fragmentSS = `
+
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+   precision highp float;
+#else
+   precision mediump float;
+#endif
+
+uniform vec4 color;
+varying vec3 fragmentColor;
+void main() {
+   gl_FragColor = vec4(fragmentColor, 1.0);
+}`;

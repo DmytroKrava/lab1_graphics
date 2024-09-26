@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CGW, Kravchuk Dmytro</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <script src="./Utils/trackball-rotator.js"></script>
+    <script src="./Utils/m4.js"></script>
+    <script src="./shader.gpu"></script>
+    <script src="./main.js"></script>
+    <link rel="stylesheet" type="text/css" href="./css/style.css">
+</head>
+<body onload="init()">
+    <div id="canvas-holder">
+        <div class="text">
+            <h2>Monge Surface with a Cylindrical Directrix Surface and with a Sinusoid as Meridian</h2>
+            <br>
+            <p id="message">Drag your mouse on the cube to rotate it.
+            (On a touch screen, you can use your finger.)</p>
+        </div>
+
+        <div class="sliders">
+            WASD to move blue point by the surface
+
+            <div>
+                <label for="angle">angle of rotation</label>
+                <input type="range" name="angle" id="angle" min="0" max="5" step="0.1" value="0">
+            </div>
+        </div>
+
+        <canvas class="drawing" width="800" height="800" id="webglcanvas" style="background-color:r"></canvas>
+    </div>
+</body>
+</html>
